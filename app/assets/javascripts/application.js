@@ -12,4 +12,9 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require foundation
+//= require angular.min
+//= require_tree ./angular
 //= require_tree .
+
+$(function(){ $(document).foundation(); });

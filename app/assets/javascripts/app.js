@@ -8,7 +8,7 @@ app.config(function($httpProvider) {
     };
 
     var error = function(response) {
-      if(response.status === 401) {
+      if (response.status === 401) {
         SessionService.unset('authenticated');
         $location.path('/login');
         FlashService.show(response.data.flash);
@@ -41,25 +41,31 @@ app.config(function($routeProvider) {
     templateUrl: 'templates/books.html',
     controller: 'BooksController',
     resolve: {
-      books : function(BookService) {
+      books: function(BookService) {
         return BookService.get();
       }
     }
   });
 
-  $routeProvider.otherwise({ redirectTo: '/login' });
+  $routeProvider.otherwise({redirectTo: '/login'});
 
 });
 
 app.run(function($rootScope, $location, AuthenticationService, FlashService) {
   var routesThatRequireAuth = ['/home'];
+  var routesIfLogin = ['/login'];
 
   $rootScope.$on('$routeChangeStart', function(event, next, current) {
-    if(_(routesThatRequireAuth).contains($location.path()) && !AuthenticationService.isLoggedIn()) {
+    if (_(routesThatRequireAuth).contains($location.path()) && !AuthenticationService.isLoggedIn()) {
       $location.path('/login');
       FlashService.show("Please log in to continue.");
+    } else if (_(routesIfLogin).contains($location.path()) && !AuthenticationService.isLoggedIn()) {
+      $location.path('/home');
+      FlashService.show("You are already login.");
     }
+
   });
+
 });
 
 app.factory("BookService", function($http) {
@@ -95,9 +101,9 @@ app.factory("SessionService", function() {
   }
 });
 
-app.factory("AuthenticationService", function($http, $sanitize, SessionService, FlashService, CSRF_TOKEN) {
+app.factory("AuthenticationService", function($http, $sanitize, SessionService, FlashService) {
 
-  var cacheSession   = function() {
+  var cacheSession = function() {
     SessionService.set('authenticated', true);
   };
 
@@ -111,22 +117,21 @@ app.factory("AuthenticationService", function($http, $sanitize, SessionService, 
 
   var sanitizeCredentials = function(credentials) {
     return {
-      email: $sanitize(credentials.email),
-      password: $sanitize(credentials.password),
-      csrf_token: CSRF_TOKEN
+      username: $sanitize(credentials.username),
+      password: $sanitize(credentials.password)
     };
   };
 
   return {
     login: function(credentials) {
-      var login = $http.post("/auth/login", sanitizeCredentials(credentials));
+      var login = $http.post("/auth_controller/signin", sanitizeCredentials(credentials));
       login.success(cacheSession);
       login.success(FlashService.clear);
       login.error(loginError);
       return login;
     },
     logout: function() {
-      var logout = $http.get("/auth/logout");
+      var logout = $http.get("/auth_controller/signin");
       logout.success(uncacheSession);
       return logout;
     },
@@ -137,7 +142,7 @@ app.factory("AuthenticationService", function($http, $sanitize, SessionService, 
 });
 
 app.controller("LoginController", function($scope, $location, AuthenticationService) {
-  $scope.credentials = { email: "", password: "" };
+  $scope.credentials = {username: "", password: ""};
 
   $scope.login = function() {
     AuthenticationService.login($scope.credentials).success(function() {
