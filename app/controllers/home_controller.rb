@@ -9,7 +9,7 @@ class HomeController < ApplicationController
       {'title' => 'Foundation', 'author' => 'Asimov'},
       {'title' => 'Treasure Island', 'author' => 'Stephenson'}
     ]
-    render :json => books.to_json and return
+    render :json => books.to_json, :status => 200 and return
   end
   
 end

@@ -1,12 +1,12 @@
 RailsIntroAngularJs::Application.routes.draw do
 
-  resources :home_controller, :only => [:index] do
+  resources :home, :path => "/home", :only => [:index] do
     collection do
       get :books
     end
   end
 
-  resources :auth_controller, :only => [] do
+  resources :auth, :path => "/auth", :only => [] do
     collection do
       post :signin
       get :signout

@@ -59,7 +59,7 @@ app.run(function($rootScope, $location, AuthenticationService, FlashService) {
     if (_(routesThatRequireAuth).contains($location.path()) && !AuthenticationService.isLoggedIn()) {
       $location.path('/login');
       FlashService.show("Please log in to continue.");
-    } else if (_(routesIfLogin).contains($location.path()) && !AuthenticationService.isLoggedIn()) {
+    } else if (_(routesIfLogin).contains($location.path()) && AuthenticationService.isLoggedIn()) {
       $location.path('/home');
       FlashService.show("You are already login.");
     }
@@ -71,7 +71,7 @@ app.run(function($rootScope, $location, AuthenticationService, FlashService) {
 app.factory("BookService", function($http) {
   return {
     get: function() {
-      return $http.get('/books');
+      return $http.get('/home/books');
     }
   };
 });
@@ -124,14 +124,14 @@ app.factory("AuthenticationService", function($http, $sanitize, SessionService, 
 
   return {
     login: function(credentials) {
-      var login = $http.post("/auth_controller/signin", sanitizeCredentials(credentials));
+      var login = $http.post("/auth/signin", sanitizeCredentials(credentials));
       login.success(cacheSession);
       login.success(FlashService.clear);
       login.error(loginError);
       return login;
     },
     logout: function() {
-      var logout = $http.get("/auth_controller/signin");
+      var logout = $http.get("/auth/signout");
       logout.success(uncacheSession);
       return logout;
     },

@@ -1,4 +1,4 @@
-class AuthControllerController < ApplicationController
+class AuthController < ApplicationController
   
   def signin
     user = login(params[:username], params[:password])
@@ -11,7 +11,7 @@ class AuthControllerController < ApplicationController
   
   def signout
     logout
-    render json: {:flash => "Invalid username or password"}, status: 500 and return
+    render json: {:flash => "You are successfully logged out"}, status: 200 and return
   end
   
 end
