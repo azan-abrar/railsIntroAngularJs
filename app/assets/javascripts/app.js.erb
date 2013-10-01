@@ -28,17 +28,17 @@ app.config(function($httpProvider) {
 app.config(function($routeProvider) {
 
   $routeProvider.when('/login', {
-    templateUrl: '<%= asset_path("employees/login.html") %>',
+    templateUrl: '<%= asset_path("login.html") %>',
     controller: 'LoginController'
   });
 
   $routeProvider.when('/home', {
-    templateUrl: '<%= asset_path("employees/home.html") %>',
+    templateUrl: '<%= asset_path("home.html") %>',
     controller: 'HomeController'
   });
 
   $routeProvider.when('/books', {
-    templateUrl: '<%= asset_path("employees/books.html") %>',
+    templateUrl: '<%= asset_path("books.html") %>',
     controller: 'BooksController',
     resolve: {
       books: function(BookService) {
